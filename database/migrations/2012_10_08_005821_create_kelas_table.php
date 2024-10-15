@@ -1,60 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Pegawai;
-use App\Models\Kelas; // Import model Kelas
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-class PegawaiController extends Controller
+class CreateKelasTable extends Migration
 {
-    public function __construct()
+    public function up()
     {
-        // Middleware auth untuk memastikan hanya pengguna yang sudah login bisa mengakses method absen
-        $this->middleware('auth')->only(['absen']);
+        Schema::create('kelas', function (Blueprint $table) {
+            $table->id(); // Primary key
+            $table->string('nama_kelas')->unique(); // Nama kelas harus unik
+            $table->json('daftar_anggota'); // Daftar anggota dalam bentuk JSON
+            $table->timestamps(); // Kolom created_at dan updated_at otomatis diisi oleh Laravel
+        });
     }
 
-    // Method untuk melakukan absensi oleh pegawai yang sudah login
-    public function absen(Request $request)
+    public function down()
     {
-        // Validasi input dari request
-        $request->validate([
-            'keterangan' => 'required|string|max:255',
-            'alasan' => 'required|string|max:255',
-            'date' => 'required|date',
-            'nama_kelas' => 'required|string|max:255'
-        ]);
-
-        // Mendapatkan pengguna yang sedang login
-        $user = Auth::user();
-
-        // Cari kelas berdasarkan nama_kelas
-        $kelas = Kelas::where('nama_kelas', $request->nama_kelas)->first();
-
-        // Jika kelas tidak ditemukan, berikan respon error
-        if (!$kelas) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Kelas tidak ditemukan'
-            ], 404);
-        }
-
-        // Simpan absensi pegawai
-        $pegawai = Pegawai::create([
-            'nama' => $user->nama,
-            'username' => $user->username,
-            'keterangan' => $request->keterangan,
-            'alasan' => $request->alasan,
-            'date' => $request->date,
-            'nama_kelas' => $kelas->nama_kelas // Ambil nama_kelas dari tabel Kelas
-        ]);
-
-        // Mengembalikan respon sukses
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Pegawai berhasil absen',
-            'data' => $pegawai
-        ], 201);
+        Schema::dropIfExists('kelas');
     }
 }
