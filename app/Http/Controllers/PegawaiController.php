@@ -40,7 +40,7 @@ class PegawaiController extends Controller
         Auth::logout();
 
         return response()->json([
-            'message' => 'Logout acak',
+            'message' => 'Akun Berhasil Logout',
             'pegawai' => $pegawai,
         ]);
     }
