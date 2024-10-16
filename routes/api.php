@@ -9,6 +9,8 @@ use App\Http\Controllers\SystemController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KetuaKelasController;
 use App\Http\Controllers\PengajuanCutiController;
+use App\Http\Controllers\AcceptController;
+
 
 
 /*
@@ -73,14 +75,18 @@ Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
 });
 
 
+Route::post('/request/cuti', [AcceptController::class, 'accept']);
 
 
 
 // Route untuk menerima pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('/pengajuan-cuti/{username}/accept', [PengajuanCutiController::class, 'acceptPengajuan'])
-    ->middleware(['auth:sanctum', 'ketua_kelas']);
+Route::post('/{username}/accept', [AcceptController::class, 'acceptPengajuan'])
+    ->middleware(['auth:sanctum', 'Ketua Kelas']);
 
 // Route untuk menolak pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('/pengajuan-cuti/{username}/reject', [PengajuanCutiController::class, 'rejectPengajuan'])
-    ->middleware(['auth:sanctum', 'ketua_kelas']);
+Route::post('{username}/reject', [PengajuanCutiController::class, 'rejectPengajuan'])
+    ->middleware(['auth:sanctum', 'Ketua Kelas']);
 
+
+
+    Route::post('/pengajuan-cuti', [PengajuanCutiController::class, 'pengajuan']);

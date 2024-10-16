@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class KetuaKelasMiddleware
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        // Cek apakah user adalah ketua kelas
-        if (Auth::user()->role !== 'Ketua Kelas') {
-            return response()->json(['message' => 'Unauthorized. Only Ketua Kelas can accept/reject.'], 403);
+        $user = $request->user();
+        if ($user && $user->jabatan === 'Ketua Kelas') {
+            return $next($request);
         }
 
-        return $next($request);
+        return response()->json(['message' => 'Anda Bukan Super Admin, Jangan Cak cak macak'], 403);
     }
 }

@@ -4,30 +4,32 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePengajuanCutiTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('pengajuan_cuti', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id'); // Menggunakan user_id untuk relasi ke tabel users
-            $table->string('nama'); // Nama pengaju
-            $table->string('nama_kelas'); // Menambahkan kolom nama_kelas
-            // Mengubah nilai default menjadi salah satu nilai enum yang ada
-            $table->enum('status', ['SedangDiProses', 'DiTerima', 'DiTolak'])->default('SedangDiProses'); 
-            $table->text('keterangan')->nullable(); // Keterangan pengajuan
-            $table->timestamps(); // Timestamps untuk created_at dan updated_at
-
-            // Definisi foreign key untuk user_id
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
-            // Definisi foreign key untuk nama_kelas
+            $table->id(); // Kolom ID
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users
+            $table->string('nama'); // Nama pemohon cuti
+            $table->string('nama_kelas'); // Nama kelas pemohon cuti
             $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
+            $table->string('status')->default('SedangDiProses'); // Status pengajuan cuti
+            $table->string('keterangan')->nullable(); // Keterangan tambahan
+            $table->date('tanggal_mulai')->nullable(); // Tanggal mulai cuti
+            $table->date('tanggal_selesai')->nullable(); // Tanggal selesai cuti
+            $table->timestamps(); // Kolom created_at dan updated_at
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('pengajuan_cuti'); // Menghapus tabel saat rollback
+        Schema::dropIfExists('pengajuan_cuti');
     }
-}
+};
