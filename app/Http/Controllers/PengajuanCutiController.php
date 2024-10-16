@@ -10,19 +10,19 @@ class PengajuanCutiController extends Controller
     // Fungsi untuk menerima pengajuan cuti berdasarkan username
     public function acceptPengajuan(Request $request, $username)
     {
-        // Temukan pengajuan cuti dari user yang memiliki username tersebut dan status 'pending'
+        // Temukan pengajuan cuti dari user yang memiliki username tersebut dan status 'SedangDiProses'
         $pengajuan = PengajuanCuti::whereHas('user', function ($query) use ($username) {
             $query->where('username', $username);
         })->where('status', 'SedangDiProses')->first();
 
-        // Jika tidak ada pengajuan yang 'pending'
+        // Jika tidak ada pengajuan yang 'SedangDiProses'
         if (!$pengajuan) {
-            return response()->json(['message' => 'Tidakk ada pengajuan cuti yang menunggu persetujuan untuk user ini.'], 404);
+            return response()->json(['message' => 'Tidak ada pengajuan cuti yang menunggu persetujuan untuk user ini.'], 404);
         }
 
-        // Ubah status menjadi accepted
+        // Ubah status menjadi DiTerima
         $pengajuan->update([
-            'status' => 'accepted',
+            'status' => 'DiTerima',
         ]);
 
         return response()->json(['message' => 'Pengajuan cuti berhasil diterima.']);
@@ -31,7 +31,7 @@ class PengajuanCutiController extends Controller
     // Fungsi untuk menolak pengajuan cuti berdasarkan username
     public function rejectPengajuan(Request $request, $username)
     {
-        // Temukan pengajuan cuti dari user yang memiliki username tersebut dan status 'pending'
+        // Temukan pengajuan cuti dari user yang memiliki username tersebut dan status 'SedangDiProses'
         $pengajuan = PengajuanCuti::whereHas('user', function ($query) use ($username) {
             $query->where('username', $username);
         })->where('status', 'SedangDiProses')->first();
@@ -40,9 +40,9 @@ class PengajuanCutiController extends Controller
             return response()->json(['message' => 'Tidak ada pengajuan cuti yang menunggu persetujuan untuk user ini.'], 404);
         }
 
-        // Ubah status menjadi rejected
+        // Ubah status menjadi DiTolak
         $pengajuan->update([
-            'status' => 'rejected',
+            'status' => 'DiTolak',
         ]);
 
         return response()->json(['message' => 'Pengajuan cuti berhasil ditolak.']);

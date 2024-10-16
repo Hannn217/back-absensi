@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'single.admin' => \App\Http\Middleware\EnsureSingleAdmin::class,
         'is.systemadmin' => \App\Http\Middleware\IsSystemAdmin::class,
         'pegawai' => \App\Http\Middleware\PegawaiMiddleware::class,
-        'ketua_kelas' => \App\Http\Middleware\KetuaKelasMiddleware::class,
+        'KetuaKelas' => \App\Http\Middleware\KetuaKelasMiddleware::class,
     ];
 }

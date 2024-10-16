@@ -10,11 +10,10 @@ class CreatePengajuanCutiTable extends Migration
     {
         Schema::create('pengajuan_cuti', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Menggunakan user_id untuk relasi ke tabel users
-            $table->string('nama'); // Nama pengaju
-            $table->string('nama_kelas'); // Menambahkan kolom nama_kelas
-            // Mengubah nilai default menjadi salah satu nilai enum yang ada
-            $table->enum('status', ['SedangDiProses', 'DiTerima', 'DiTolak'])->default('SedangDiProses'); 
+            $table->unsignedBigInteger('user_id'); // Ganti username menjadi user_id untuk relasi ke tabel users
+            $table->foreign('nama')->references('username')->on('users')->onDelete('cascade');
+            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade'); // Tambahkan foreign key            // Nama pengaju
+            $table->enum('status', ['SedangDiProses', 'DiTerima', 'DiTolak'])->default('SedangDiProses'); // Default status
             $table->text('keterangan')->nullable(); // Keterangan pengajuan
             $table->timestamps(); // Timestamps untuk created_at dan updated_at
 
