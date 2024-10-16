@@ -8,6 +8,8 @@ use App\Http\Controllers\SuperController;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\KetuaKelasController;
+use App\Http\Controllers\PengajuanCutiController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -69,3 +71,16 @@ Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
     // Rute untuk logout
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
 });
+
+
+
+
+
+// Route untuk menerima pengajuan cuti berdasarkan username (menggunakan POST)
+Route::post('/pengajuan-cuti/{username}/accept', [PengajuanCutiController::class, 'acceptPengajuan'])
+    ->middleware(['auth:sanctum', 'ketua_kelas']);
+
+// Route untuk menolak pengajuan cuti berdasarkan username (menggunakan POST)
+Route::post('/pengajuan-cuti/{username}/reject', [PengajuanCutiController::class, 'rejectPengajuan'])
+    ->middleware(['auth:sanctum', 'ketua_kelas']);
+
