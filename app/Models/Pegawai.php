@@ -17,7 +17,7 @@ class Pegawai extends Model
         'username',
         'keterangan',
         'alasan',
-        'kelas_id',
+        'nama_kelas',
         'date',
     ];
 

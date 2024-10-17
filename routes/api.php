@@ -69,7 +69,7 @@ Route::post('pegawai/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
     // Rute untuk absensi
-    Route::post('/pegawai/absen', [PegawaiController::class, 'absen']);
+    Route::post('/pegawai/absen', [PegawaiController::class, 'store']);
     // Rute untuk logout
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
 });

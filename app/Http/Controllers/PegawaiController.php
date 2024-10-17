@@ -2,46 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PegawaiController extends Controller
 {
-    // Method untuk absen
-    public function absen(Request $request)
+    // Menampilkan semua data pegawai
+    public function index()
     {
-        // Validasi request jika perlu
-        $request->validate([
-            'tanggal' => 'required|date',
-            'status' => 'required|in:hadir,tidak_hadir',
-        ]);
-
-        // Logika untuk menyimpan absensi
-        $pegawai = Auth::user(); // Ambil data pegawai yang sedang login
-        // Misalnya, simpan absensi ke database
-        // Absen::create(['pegawai_id' => $pegawai->id, 'tanggal' => $request->tanggal, 'status' => $request->status]);
-
-        return response()->json([
-            'message' => 'Absen berhasil dicatat',
-            'data' => [
-                'pegawai' => $pegawai,
-                'tanggal' => $request->tanggal,
-                'status' => $request->status,
-            ],
-        ]);
+        $pegawai = Pegawai::all();
+        return response()->json($pegawai, 200); // Mengembalikan semua pegawai dengan status 200
     }
 
-    // Method untuk logout
-    public function logout(Request $request)
+    // Menampilkan form untuk membuat pegawai baru
+    public function create()
     {
-        $pegawai = Auth::user();
+        return view('pegawai.create');
+    }
 
-        // Logika untuk logout
-        Auth::logout();
+    // Menyimpan data pegawai baru ke database
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'keterangan' => 'required|in:hadir,izin,sakit',
+            'alasan' => 'nullable|string|max:255',
+            'nama_kelas' => 'required|exists:kelas,id',
+            'date' => 'required|date',
+        ]);
+
+        $pegawai = Pegawai::create($request->all());
 
         return response()->json([
-            'message' => 'Akun Berhasil Logout',
+            'message' => 'Pegawai berhasil ditambahkan.',
             'pegawai' => $pegawai,
-        ]);
+        ], 201); // Mengembalikan respons dengan status 200
+    }
+
+    // Menghapus data pegawai dari database
+    public function destroy($id)
+    {
+        $pegawai = Pegawai::findOrFail($id);
+        $pegawai->delete();
+
+        return response()->json([
+            'message' => 'Data pegawai berhasil dihapus.',
+        ], 200); // Mengembalikan respons dengan status 200
     }
 }
