@@ -124,12 +124,12 @@ class SuperController extends Controller
             'nama_kelas' => 'required|string|max:255'
         ]);
 
-        // Update specific fields instead of all fields
+        // Update fields
         $user->update([
             'nama' => $request->nama,
             'email' => $request->email,
             'nomor_hp' => $request->nomor_hp,
-            'nama_kelas' => $request->nama_kelas,
+            'nama_kelas' => $request->nama_kelas, // Ensure this field is updated properly
         ]);
 
         return response()->json([
@@ -142,12 +142,13 @@ class SuperController extends Controller
                 'email' => $user->email,
                 'nomor_hp' => $user->nomor_hp,
                 'jabatan' => $user->jabatan,
-                'nama_kelas' => $user->nama_kelas,
+                'nama_kelas' => $user->nama_kelas ?? 'Tidak ada kelas', // Make sure to handle null values
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
         ], 200);
     }
+
 
 
     public function destroy($username)
@@ -253,12 +254,12 @@ class SuperController extends Controller
         }
 
         // Ubah jabatan pengguna menjadi Pegawai
-        $super->jabatan = 'Pegawai';
+        $super->jabatan = 'Ketua Kelas';
         $super->save();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Pegawai berhasil di-demote menjadi Pegawai',
+            'message' => 'Ketua Kelas berhasil di-demote menjadi Pegawai',
             'data' => [
                 'id' => $super->id,
                 'nama' => $super->nama,
