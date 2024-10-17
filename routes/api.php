@@ -89,4 +89,4 @@ Route::post('{username}/reject', [PengajuanCutiController::class, 'rejectPengaju
 
 
 
-    Route::post('/pengajuan-cuti', [PengajuanCutiController::class, 'pengajuan']);
+Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']);
