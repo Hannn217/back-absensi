@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('username'); // Username pegawai (relasi dengan kolom daftar_anggota di tabel kelas)
             $table->enum('keterangan', ['hadir', 'izin', 'sakit']); // Keterangan absensi
             $table->string('alasan')->nullable();
+            $table->string('nama_kelas');
             $table->foreignId('nama_kelas')->constrained('kelas')->onDelete('cascade'); // Relasi ke tabel kelas (kolom nama_kelas)
             $table->date('date'); // Tanggal absensi
             $table->timestamps();

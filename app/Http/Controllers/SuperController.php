@@ -62,7 +62,7 @@ class SuperController extends Controller
                 'email' => $super->email,
                 'nomor_hp' => $super->nomor_hp,
                 'jabatan' => $super->jabatan,
-                // 'nama_kelas' =>
+                'nama_kelas' => $super->nama_kelas,
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -197,7 +197,8 @@ class SuperController extends Controller
         // Validasi nama_kelas dan daftar_anggota
         $request->validate([
             'nama_kelas' => 'required|string|max:255',
-            'daftar_anggota.*' => 'required|array|string', // Validasi untuk daftar anggota
+            'daftar_anggota' => 'required|array', // array saja tanpa '*'
+            'daftar_anggota.*' => 'required|string', // setiap anggota harus string
         ]);
 
         // Hitung jumlah Ketua Kelas yang ada
@@ -215,7 +216,7 @@ class SuperController extends Controller
         // Buat kelas baru dan hubungkan dengan Ketua Kelas
         $kelas = Kelas::create([
             'nama_kelas' => $request->nama_kelas,
-            'ketua_kelas_id' => $super->id,
+            // 'ketua_kelas_id' => $super->id,
             'daftar_anggota' => json_encode($request->daftar_anggota), // Simpan daftar anggota sebagai JSON
         ]);
 
@@ -230,7 +231,7 @@ class SuperController extends Controller
                 'nomor_hp' => $super->nomor_hp,
                 'jabatan' => $super->jabatan,
                 'nama_kelas' => $request->nama_kelas,
-                'kelas_id' => $kelas->id,
+                // 'kelas_id' => $kelas->id,
                 'daftar_anggota' => $request->daftar_anggota,
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
@@ -254,7 +255,7 @@ class SuperController extends Controller
         }
 
         // Ubah jabatan pengguna menjadi Pegawai
-        $super->jabatan = 'Ketua Kelas';
+        $super->jabatan = 'Pegawai';
         $super->save();
 
         return response()->json([

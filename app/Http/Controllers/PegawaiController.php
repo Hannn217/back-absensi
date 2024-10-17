@@ -27,8 +27,8 @@ class PegawaiController extends Controller
             'nama' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'keterangan' => 'required|in:hadir,izin,sakit',
-            'alasan' => 'nullable|string|max:255',
-            'nama_kelas' => 'required|exists:kelas,id',
+            'alasan' => 'required|string|max:255',
+            'nama_kelas' => 'required|exists:kelas,nama_kelas',
             'date' => 'required|date',
         ]);
 

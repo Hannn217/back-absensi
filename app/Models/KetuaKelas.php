@@ -12,7 +12,7 @@ class KetuaKelas extends Model
     protected $table = 'ketua';
 
     protected $fillable = [
-        'nama', 'username', 'keterangan', 'alasan', 'kelas_id'
+        'nama', 'username', 'keterangan', 'alasan', 'nama_kelas'
     ];
 
     // Relasi ke model Kelas

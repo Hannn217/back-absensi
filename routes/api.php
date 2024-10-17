@@ -74,18 +74,10 @@ Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
 });
 
-
-Route::post('/request/cuti', [AcceptController::class, 'accept']);
-
-
-
 // Route untuk menerima pengajuan cuti berdasarkan username (menggunakan POST)
 Route::post('/{id}/accept', [AcceptController::class, 'acceptPengajuan']);
 
 // Route untuk menolak pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('{username}/reject', [PengajuanCutiController::class, 'rejectPengajuan'])
-    ->middleware(['auth:sanctum', 'Ketua Kelas']);
-
-
+Route::post('{id}/reject', [AcceptController::class, 'rejectPengajuan']);
 
 Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']);
