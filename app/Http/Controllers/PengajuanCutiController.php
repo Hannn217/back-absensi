@@ -5,38 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\PengajuanCuti;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator; // Make sure to include the Validator facade
+use Illuminate\Support\Facades\Validator; // Pastikan untuk mengimpor Validator
 
 class PengajuanCutiController extends Controller
 {
     // Fungsi untuk mengajukan cuti
     public function pengajuan(Request $request)
     {
-        // Validasi input pengguna dan simpan hasilnya ke dalam $validatedData
-        $request->validate([
-            'users_id' => 'required|string|max:255|exists:users,id', // 'exists' to check if user exists
-            'nama_kelas' => 'required|string|max:255|exists:kelas,nama_kelas', // Changed 'unique' to 'exists'
+        // Validasi input pengguna
+        $validasi = Validator::make($request->all(), [
+            'users_id' => 'required|string|max:255|exists:users,id',
+            'nama_kelas' => 'required|string|max:255|exists:kelas,nama_kelas',
             'nama' => 'required|string|max:255',
             'keterangan' => 'required|string|max:500',
             'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai', // Ensure end date is after start date
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
         ]);
 
-        // Fetch user based on the validated 'users_id'
-        $user = User::findOrFail($validatedData['id']); // Use 'findOrFail' to get the user
+        if ($validasi->fails()) {
+            return response()->json($validasi->errors(), 422);
+        }
 
         // Buat pengajuan cuti
         $pengajuancuti = PengajuanCuti::create([
-            'users_id' => $validatedData['users_id'], // Use validated data
-            'nama_kelas' => $validatedData['nama_kelas'],
-            'nama' => $validatedData['nama'],
-            'tanggal_mulai' => $validatedData['tanggal_mulai'],
-            'tanggal_selesai' => $validatedData['tanggal_selesai'],
+            'user_id' => $request->input('users_id'), // Mengakses data dengan input()
+            'nama_kelas' => $request->input('nama_kelas'),
+            'nama' => $request->input('nama'),
+            'tanggal_mulai' => $request->input('tanggal_mulai'),
+            'tanggal_selesai' => $request->input('tanggal_selesai'),
             'status' => 'SedangDiProses',
-            'keterangan' => $validatedData['keterangan'],
+            'keterangan' => $request->input('keterangan'),
         ]);
 
-        // Mengembalikan respon sederhana
-        return response()->json(['message' => 'Cuti berhasil diajukan!'], 201);
+        // Mengembalikan respons JSON dengan pesan sukses dan data pengajuan
+        return response()->json(['message' => 'Cuti berhasil diajukan!', 'data' => $pengajuancuti], 201);
     }
 }

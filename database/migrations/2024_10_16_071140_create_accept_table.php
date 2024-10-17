@@ -28,6 +28,6 @@ class CreateAcceptTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('pengajuan_cuti'); // Menghapus tabel saat rollback
+        Schema::dropIfExists('accept'); // Menghapus tabel saat rollback
     }
 }

@@ -9,23 +9,25 @@ class PengajuanCuti extends Model
 {
     use HasFactory;
 
-    // Tentukan nama tabel jika tidak sesuai dengan konvensi Laravel
-    protected $table = 'pengajuan_cuti';
+    // Specify the table name if it differs from the pluralized model name
+    protected $table = 'pengajuan_cuti'; // Change if your table has a different name
 
-    // Kolom yang dapat diisi secara massal
+    // Define fillable attributes for mass assignment
     protected $fillable = [
-        'user_id',
-        'nama',
-        'nama_kelas',
-        'status',
-        'keterangan',
-        'tanggal_mulai',
-        'tanggal_selesai',
+        'user_id',      // Foreign key for the user
+        'nama',         // Name of the applicant
+        'nama_kelas',   // Name of the class
+        'tanggal_mulai', // Start date of the leave
+        'tanggal_selesai', // End date of the leave
+        'status',       // Status of the leave request
+        'keterangan',   // Additional information about the leave
     ];
 
-    // Definisikan relasi dengan model User
+    // Define the relationship with User model
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id'); // Foreign key in the current model
     }
+
+    // You can add more relationships as needed (e.g., kelas)
 }

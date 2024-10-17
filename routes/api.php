@@ -80,8 +80,7 @@ Route::post('/request/cuti', [AcceptController::class, 'accept']);
 
 
 // Route untuk menerima pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('/{username}/accept', [AcceptController::class, 'acceptPengajuan'])
-    ->middleware(['auth:sanctum', 'Ketua Kelas']);
+Route::post('/{id}/accept', [AcceptController::class, 'acceptPengajuan']);
 
 // Route untuk menolak pengajuan cuti berdasarkan username (menggunakan POST)
 Route::post('{username}/reject', [PengajuanCutiController::class, 'rejectPengajuan'])
