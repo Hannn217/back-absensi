@@ -35,7 +35,7 @@ class PegawaiController extends Controller
         $pegawai = Pegawai::create($request->all());
 
         return response()->json([
-            'message' => 'Pegawai berhasil ditambahkan.',
+            'message' => 'Pegawai berhasil ditambahkann.',
             'pegawai' => $pegawai,
         ], 201); // Mengembalikan respons dengan status 200
     }
