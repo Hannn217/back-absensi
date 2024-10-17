@@ -118,13 +118,19 @@ class SuperController extends Controller
         }
 
         $request->validate([
-            'nama' => 'required',
+            'nama' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'nomor_hp' => 'required',
-            'nama_kelas' => 'required'
+            'nomor_hp' => 'required|string|max:15',
+            'nama_kelas' => 'required|string|max:255'
         ]);
 
-        $user->update($request->all());
+        // Update specific fields instead of all fields
+        $user->update([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'nomor_hp' => $request->nomor_hp,
+            'nama_kelas' => $request->nama_kelas,
+        ]);
 
         return response()->json([
             'status' => 'success',
@@ -142,6 +148,7 @@ class SuperController extends Controller
             ],
         ], 200);
     }
+
 
     public function destroy($username)
     {

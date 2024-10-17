@@ -17,6 +17,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('nomor_hp');
             $table->enum('jabatan', ['Super Admin', 'System Admin', 'Ketua Kelas', 'Pegawai'])->default('Pegawai');
+            $table->string('nama_kelas');
+            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
             $table->timestamps();
         });
     }

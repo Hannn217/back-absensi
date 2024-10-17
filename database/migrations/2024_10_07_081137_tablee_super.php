@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('super', function (Blueprint $table) {
-            $table->id(); // Primary key
+            $table->id();
             $table->string('nama');
-            $table->string('username')->unique(); // Username harus unik
+            $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->string('nama_kelas'); // Buat kolom nama_kelas
-            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade'); // Tambahkan foreign key
+            $table->string('nama_kelas'); // menggunakan string nama_kelas
+            // Membuat foreign key yang mengacu ke tabel kelas pada kolom nama_kelas
+            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
             $table->string('nomor_hp');
-            $table->timestamps(); // Kolom created_at dan updated_at otomatis diisi oleh Laravel
+            $table->timestamps();
         });
-        //
     }
 
     /**
