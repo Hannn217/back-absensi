@@ -62,6 +62,7 @@ class SuperController extends Controller
                 'email' => $super->email,
                 'nomor_hp' => $super->nomor_hp,
                 'jabatan' => $super->jabatan,
+                // 'nama_kelas' =>
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -79,7 +80,7 @@ class SuperController extends Controller
             ], 404);
         }
 
-        if (auth()->user()->jabatan !== 'Super Admin') {
+        if (auth()->user()->jabatan != 'Super Admin') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Anda tidak memiliki izin untuk melihat data ini'
