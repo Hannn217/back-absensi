@@ -10,11 +10,14 @@ class CreateKetuaKelasTable extends Migration
     {
         Schema::create('ketua', function (Blueprint $table) {
             $table->id();
-            $table->string('nama'); // Nama ketua
-            $table->string('username')->unique(); // Username ketua
+            $table->string('nama');
+            $table->foreign('username')->references('username')->on('users')->onDelete('cascade');            // Nama ketua
+            $table->string('username'); // Username ketua
             $table->enum('keterangan', ['hadir', 'izin', 'sakit']); // Keterangan absensi
             $table->string('alasan')->nullable(); 
-            $table->foreignId('nama_kelas')->constrained('kelas')->onDelete('cascade'); // Asal kelas, relasi dengan nama_kelas dari tabel kelas
+            $table->string('nama_kelas'); // Nama ketua
+            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade'); // Asal kelas, relasi dengan nama_kelas dari tabel kelas
+            $table->date('date'); // Tanggal absensi
             $table->timestamps();
         });
     }

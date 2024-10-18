@@ -4,86 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\KetuaKelas;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class KetuaKelasController extends Controller
 {
-    // Menampilkan semua ketua kelas
+    // Menampilkan semua data ketua
     public function index()
     {
-        $ketuaKelas = KetuaKelas::all();
-        return response()->json([
-            'status' => 'success',
-            'data' => $ketuaKelas
-        ]);
+        $ketua = KetuaKelas::all();
+        return response()->json($ketua, 200);
     }
 
-    // Menambahkan ketua kelas baru
+    // Menampilkan form untuk membuat ketua baru
+    public function create()
+    {
+        return view('ketua.create');
+    }
+
+    // Menyimpan data ketua baru ke database
     public function store(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:ketua_kelas',
-            'kelas' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
             'keterangan' => 'required|in:hadir,izin,sakit',
-            'alasan' => 'nullable|string|max:255',
+            'alasan' => 'required|string|max:255',
+            'nama_kelas' => 'required|exists:kelas,nama_kelas',
             'date' => 'required|date',
         ]);
 
-        $ketuaKelas = KetuaKelas::create($request->all());
+        $ketua = KetuaKelas::create($request->all());
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'absensi Ketua kelas berhasil ditambahkan',
-            'data' => $ketuaKelas
+            'message' => 'KetuaKelas berhasil melakukan absen.',
+            'ketua' => $ketua,
         ], 201);
     }
 
-    // Menampilkan detail ketua kelas tertentu
-    public function show($username)
+    // Menghapus data ketua dari database berdasarkan username
+    public function destroy($username)
     {
-        $ketuaKelas = KetuaKelas::find($username);
-        if (!$ketuaKelas) {
-            return response()->json(['message' => 'Ketua kelas tidak ditemukan'], 404);
-        }
+        $ketua = KetuaKelas::where('username', $username)->firstOrFail();
+        $ketua->delete();
 
         return response()->json([
-            'status' => 'success',
-            'data' => $ketuaKelas
-        ]);
-    }
-
-    // Memperbarui ketua kelas tertentu
-    public function update(Request $request, $username)
-    {
-        // Cari ketua kelas berdasarkan username
-        $ketuaKelas = KetuaKelas::where('username', $username)->first();
-        
-        // Jika ketua kelas tidak ditemukan
-        if (!$ketuaKelas) {
-            return response()->json(['message' => 'Ketua kelas tidak ditemukan'], 404);
-        }
-    
-        // Validasi input
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            // Validasi unique dengan pengecualian untuk username yang sedang diupdate
-            'username' => ['required', 'string', 'max:255', Rule::unique('ketua_kelas')->ignore($ketuaKelas->id)],
-            'kelas' => 'required|string|max:255',
-            'keterangan' => 'required|in:hadir,izin,sakit',
-            'alasan' => 'nullable|string|max:255', // Alasan hanya wajib jika izin atau sakit
-            'date' => 'required|date',
-        ]);
-    
-        // Update data ketua kelas
-        $ketuaKelas->update($request->all());
-    
-        // Response sukses
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Ketua kelas berhasil diperbarui',
-            'data' => $ketuaKelas
+            'message' => 'Data ketua berhasil dihapus.',
         ], 200);
     }
-    
 }
