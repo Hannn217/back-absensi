@@ -35,15 +35,15 @@ class PegawaiController extends Controller
         $pegawai = Pegawai::create($request->all());
 
         return response()->json([
-            'message' => 'Pegawai berhasil ditambahkann.',
+            'message' => 'Pegawai berhasil melakukan absen.',
             'pegawai' => $pegawai,
         ], 201); // Mengembalikan respons dengan status 200
     }
 
     // Menghapus data pegawai dari database
-    public function destroy($id)
+    public function destroy($username)
     {
-        $pegawai = Pegawai::findOrFail($id);
+        $pegawai = Pegawai::findOrFail($username);
         $pegawai->delete();
 
         return response()->json([

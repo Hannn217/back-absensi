@@ -68,16 +68,16 @@ Route::post('pegawai/register', [AuthController::class, 'register']);
 Route::post('pegawai/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
-    // Rute untuk absensi
     Route::post('/pegawai/absen', [PegawaiController::class, 'store']);
-    // Rute untuk logout
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
 });
 
-// Route untuk menerima pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('/{id}/accept', [AcceptController::class, 'acceptPengajuan']);
+//Route Untuk pengajuan cuti pegawai
+Route::post('/{username}/accept', [AcceptController::class, 'acceptPengajuan'])->middleware('auth:sanctum', 'cuti.pegawai');
+Route::post('{username}/reject', [AcceptController::class, 'rejectPengajuan'])->middleware('auth:sanctum', 'cuti.pegawai');
+Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan'])->middleware('auth:sanctum');
 
-// Route untuk menolak pengajuan cuti berdasarkan username (menggunakan POST)
-Route::post('{id}/reject', [AcceptController::class, 'rejectPengajuan']);
-
-Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']);
+//Route untuk pengajuan cuti ketua kelas
+Route::post('/{username}/accept', [AcceptController::class, 'acceptPengajuan'])->middleware('auth:sanctum', 'cuti.pegawai');
+Route::post('{username}/reject', [AcceptController::class, 'rejectPengajuan'])->middleware('auth:sanctum', 'cuti.pegawai');
+Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan'])->middleware('auth:sanctum');

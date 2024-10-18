@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('pengajuan_cuti', function (Blueprint $table) {
             $table->id(); // Kolom ID
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke tabel users
+            $table->string('username');
+            $table->foreign('username')->references('username')->on('users')->onDelete('cascade'); // Relasi ke tabel users
             $table->string('nama'); // Nama pemohon cuti
             $table->string('nama_kelas'); // Nama kelas pemohon cuti
             $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');

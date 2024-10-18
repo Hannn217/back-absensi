@@ -9,17 +9,17 @@ use App\Models\User;
 class AcceptController extends Controller
 {
     // Fungsi untuk menerima pengajuan cuti berdasarkan id
-    public function acceptPengajuan(Request $request, $id)
+    public function acceptPengajuan( $request, $username)
     {
         // Temukan user berdasarkan id
-        $user = User::find($id);
+        $user = User::find($username);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan.'], 404);
         }
 
         // Temukan pengajuan cuti dari user yang memiliki id tersebut dan status 'SedangDiProses'
-        $pengajuan = PengajuanCuti::where('user_id', $user->id)
+        $pengajuan = PengajuanCuti::where('username', $user->username)
             ->where('status', 'SedangDiProses')
             ->first();
 
@@ -34,17 +34,17 @@ class AcceptController extends Controller
     }
 
     // Fungsi untuk menolak pengajuan cuti berdasarkan id
-    public function rejectPengajuan(Request $request, $id)
+    public function rejectPengajuan(Request $request, $username)
     {
         // Temukan user berdasarkan id
-        $user = User::find($id);
+        $user = User::find($username);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan.'], 404);
         }
 
         // Temukan pengajuan cuti dari user yang memiliki id tersebut dan status 'SedangDiProses'
-        $pengajuan = PengajuanCuti::where('user_id', $user->id)
+        $pengajuan = PengajuanCuti::where('username', $user->username)
             ->where('status', 'SedangDiProses')
             ->first();
 

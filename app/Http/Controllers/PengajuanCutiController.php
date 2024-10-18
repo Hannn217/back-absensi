@@ -14,7 +14,7 @@ class PengajuanCutiController extends Controller
     {
         // Validasi input pengguna
         $validasi = Validator::make($request->all(), [
-            'users_id' => 'required|string|max:255|exists:users,id',
+            'username' => 'required|string|max:255|exists:users,username',
             'nama_kelas' => 'required|string|max:255|exists:kelas,nama_kelas',
             'nama' => 'required|string|max:255',
             'keterangan' => 'required|string|max:500',
@@ -28,7 +28,7 @@ class PengajuanCutiController extends Controller
 
         // Buat pengajuan cuti
         $pengajuancuti = PengajuanCuti::create([
-            'user_id' => $request->input('users_id'), // Mengakses data dengan input()
+            'username' => $request->input('username'), // Mengakses data dengan input()
             'nama_kelas' => $request->input('nama_kelas'),
             'nama' => $request->input('nama'),
             'tanggal_mulai' => $request->input('tanggal_mulai'),

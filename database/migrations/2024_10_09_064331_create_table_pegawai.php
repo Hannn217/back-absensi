@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 return new class extends Migration
 {
@@ -12,10 +13,11 @@ return new class extends Migration
             $table->id();
             $table->string('nama'); // Nama pegawai
             $table->string('username'); // Username pegawai (relasi dengan kolom daftar_anggota di tabel kelas)
+            $table->foreign('username')->references('username')->on('users')->onDelete('cascade');
             $table->enum('keterangan', ['hadir', 'izin', 'sakit']); // Keterangan absensi
             $table->string('alasan')->nullable();
-            $table->string('nama_kelas');
-            $table->foreignId('nama_kelas')->constrained('kelas')->onDelete('cascade'); // Relasi ke tabel kelas (kolom nama_kelas)
+            $table->string('nama_kelas')->unique()->nullable();
+            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
             $table->date('date'); // Tanggal absensi
             $table->timestamps();
         });

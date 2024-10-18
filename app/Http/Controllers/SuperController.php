@@ -23,6 +23,7 @@ class SuperController extends Controller
                     'email' => $super->email,
                     'nomor_hp' => $super->nomor_hp,
                     'jabatan' => $super->jabatan,
+                    'nama_kelas' => $user->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas',
                     'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                     'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 ];
@@ -39,7 +40,7 @@ class SuperController extends Controller
             'password' => 'required',
             'nomor_hp' => 'required',
             'jabatan' => 'required',
-            'nama_kelas' => 'required'
+            'nama_kelas' => 'nullable'
         ]);
 
         $super = User::create([
@@ -62,7 +63,7 @@ class SuperController extends Controller
                 'email' => $super->email,
                 'nomor_hp' => $super->nomor_hp,
                 'jabatan' => $super->jabatan,
-                'nama_kelas' => $super->nama_kelas,
+                'nama_kelas' => $super->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas',
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -96,6 +97,7 @@ class SuperController extends Controller
                 'email' => $user->email,
                 'nomor_hp' => $user->nomor_hp,
                 'jabatan' => $user->jabatan,
+                'nama_kelas' => $user->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas',
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -124,6 +126,15 @@ class SuperController extends Controller
             'nama_kelas' => 'required|string|max:255'
         ]);
 
+        // Pastikan kelas yang diinput valid
+        $kelas = Kelas::where('nama_kelas', $request->nama_kelas)->first();
+        if (!$kelas) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kelas tidak ditemukan. Pastikan nama_kelas valid.'
+            ], 404);
+        }
+
         // Update fields
         $user->update([
             'nama' => $request->nama,
@@ -142,7 +153,7 @@ class SuperController extends Controller
                 'email' => $user->email,
                 'nomor_hp' => $user->nomor_hp,
                 'jabatan' => $user->jabatan,
-                'nama_kelas' => $user->nama_kelas ?? 'Tidak ada kelas', // Make sure to handle null values
+                'nama_kelas' => $user->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas', // Make sure to handle null values
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],

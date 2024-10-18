@@ -14,7 +14,7 @@ class PengajuanCuti extends Model
 
     // Define fillable attributes for mass assignment
     protected $fillable = [
-        'user_id',      // Foreign key for the user
+        'username',      // Foreign key for the user
         'nama',         // Name of the applicant
         'nama_kelas',   // Name of the class
         'tanggal_mulai', // Start date of the leave

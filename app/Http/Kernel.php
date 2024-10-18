@@ -69,5 +69,7 @@ class Kernel extends HttpKernel
         'pegawai' => \App\Http\Middleware\PegawaiMiddleware::class,
         'KetuaKelas' => \App\Http\Middleware\KetuaKelasMiddleware::class,
         'check.leave' => \App\Http\Middleware\CheckUserCanApplyForLeave::class,
+        'cuti.pegawai' => \App\Http\Middleware\CutiPegawai::class,
+        'cuti.ketua' => \App\Http\Middleware\CutiKetua::class,
     ];
 }
