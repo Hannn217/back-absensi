@@ -30,7 +30,7 @@ class User extends Authenticatable
     // Relasi dengan Kelas (Jika Ketua Kelas terkait dengan Kelas tertentu)
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class, 'nama_kelas');
+        return $this->belongsTo(Kelas::class, 'nama_kelas', 'nama_kelas');
     }
 
     /**

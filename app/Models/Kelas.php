@@ -16,9 +16,18 @@ class Kelas extends Model
         'daftar_anggota'
     ];
 
+    protected $rules = [
+        'nama_kelas' => 'required|string|unique:kelas,nama_kelas|max:255',
+    ];
+
     // Relasi ke model Ketua
     public function ketua()
     {
         return $this->hasOne(KetuaKelas::class, 'nama_kelas');
+    }
+    
+    public function users()
+    {
+        return $this->hasMany(User::class, 'nama_kelas', 'nama_kelas');
     }
 }
