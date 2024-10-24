@@ -168,7 +168,6 @@ class SuperController extends Controller
         }
 
         // Cek apakah jabatan pengguna adalah 'Ketua Kelas'
-        // Cek apakah jabatan pengguna adalah 'Ketua Kelas'
         if ($super->jabatan === 'Ketua Kelas') {
             // Cek apakah pengguna sudah menjadi ketua dari kelas yang sama
             $existingKelas = Kelas::whereJsonContains('daftar_anggota', $super->username)->first();
@@ -179,11 +178,18 @@ class SuperController extends Controller
                     'message' => 'User ini sudah menjadi ketua kelas di ' . $existingKelas->nama_kelas
                 ], 403);
             } else {
-                // Logika untuk menjadikan user sebagai ketua kelas baru bisa ditambahkan di sini
-                // ...
+                // Menyimpan kelas baru tanpa atribut ketua_kelas
+                $kelasBaru = new Kelas();
+                $kelasBaru->nama_kelas = $request->nama_kelas; // Menggunakan nama kelas dari request
+                $kelasBaru->daftar_anggota = json_encode($request->daftar_anggota); // Menggunakan daftar anggota dari request
+                $kelasBaru->save(); // Simpan kelas baru
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Kelas baru telah berhasil dibuat: ' . $kelasBaru->nama_kelas
+                ], 200);
             }
         }
-
 
         // Validasi nama_kelas dan daftar_anggota
         $request->validate([
