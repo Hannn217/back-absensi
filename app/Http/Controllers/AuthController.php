@@ -14,7 +14,6 @@ class AuthController extends Controller
     // Register
     public function register(Request $request)
     {
-        // Middleware akan menangani pemeriksaan jabatan, sehingga validasi hanya fokus pada format
         $validasi = Validator::make($request->all(), [
             'username' => 'required|string|max:255|unique:users,username',
             'nama' => 'required',
@@ -28,7 +27,7 @@ class AuthController extends Controller
             return response()->json($validasi->errors(), 422);
         }
 
-        // Buat user baru
+        // Create a new user
         $user = User::create([
             'nama' => $request->nama,
             'nomor_hp' => $request->nomor_hp,
@@ -36,10 +35,9 @@ class AuthController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'jabatan' => $request->jabatan,
-
         ]);
 
-        // Buat token
+        // Create token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json(['token' => $token], 201);
@@ -48,6 +46,24 @@ class AuthController extends Controller
     // Login
     public function login(Request $request)
     {
+        // Check for Basic Auth
+        if ($request->getUser() && $request->getPassword()) {
+            $credentials = [
+                'username' => $request->getUser(),
+                'password' => $request->getPassword(),
+            ];
+
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                return response()->json(['token' => $token], 201);
+            }
+
+            return response()->json(['message' => 'Username atau password salah'], 401);
+        }
+
+        // Fallback to standard request validation
         $validasi = Validator::make($request->all(), [
             'username' => 'required|string',
             'password' => 'required',
