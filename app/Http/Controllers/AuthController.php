@@ -57,7 +57,20 @@ class AuthController extends Controller
                 $user = Auth::user();
                 $token = $user->createToken('auth_token')->plainTextToken;
 
-                return response()->json(['token' => $token], 201);
+                // Return user data along with token
+                return response()->json([
+                    'userData' => [
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'nama' => $user->nama,
+                        'email' => $user->email,
+                        'nomor_hp' => $user->nomor_hp,
+                        'jabatan' => $user->jabatan,
+                        'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
+                        // Tambahkan atribut lain yang diperlukan
+                    ],
+                    'token' => $token,
+                ], 201);
             }
 
             return response()->json(['message' => 'Username atau password salah'], 401);
@@ -77,11 +90,24 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return response()->json(['token' => $token], 201);
+            // Return user data along with token
+            return response()->json([
+                'userData' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'nama' => $user->nama,
+                    'email' => $user->email,
+                    'nomor_hp' => $user->nomor_hp,
+                    'jabatan' => $user->jabatan,
+                    'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
+                ],
+                'token' => $token,
+            ], 201);
         }
 
         return response()->json(['message' => 'Username atau password salah'], 401);
     }
+
 
     // Logout
     public function logout(Request $request)

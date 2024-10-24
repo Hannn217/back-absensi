@@ -33,10 +33,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::middleware(['auth:sanctum', 'is.superadmin'])->group(function () {
     // CRUD Pegawai dan Ketua Kelas
     Route::get('/pegawai', [SuperController::class, 'index']); // List all employees
-    Route::post('/pegawai/super/create', [SuperController::class, 'store']); // Create Pegawai
-    Route::get('/pegawai/super/{username}', [SuperController::class, 'show']); // View employee
-    Route::put('/pegawai/super/{username}', [SuperController::class, 'update']); // Update employee
-    Route::delete('/pegawai/super/{username}', [SuperController::class, 'destroy']); // Delete employee
+    Route::get('/pegawai/{username}', [SuperController::class, 'show']); // View employee
+    Route::put('/pegawai/{username}', [SuperController::class, 'update']); // Update employee
+    Route::delete('/pegawai/{username}/dilit', [SuperController::class, 'destroy']); // Delete employee
 
     // Promosi dan Demosi
     Route::post('/pegawai/super/{username}/promote', [SuperController::class, 'promoteToKetuaKelas']); // Promote to Ketua Kelas
