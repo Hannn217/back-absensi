@@ -42,18 +42,18 @@ Route::middleware(['auth:sanctum', 'is.superadmin'])->group(function () {
     Route::post('/pegawai/super/{username}/demote', [SuperController::class, 'demoteKetuaKelas']); // Demote from Ketua Kelas
 
     // Manajemen Kelas
-    Route::get('/kelas/super', [SuperController::class, 'listKelas']); // List all classes
-    Route::post('/kelas/super', [SuperController::class, 'createKelas']); // Create class
-    Route::delete('/kelas/super/{kelas}', [SuperController::class, 'deleteKelas']); // Delete class
+    Route::get('/kelas', [SuperController::class, 'listKelas']); // List all classes
+    Route::post('/kelas', [SuperController::class, 'createKelas']); // Create class
+    Route::delete('/kelas/{kelas}', [SuperController::class, 'deleteKelas']); // Delete class
 });
 
 //Route Untuk System Admin
 Route::middleware(['auth:sanctum', 'is.systemadmin'])->group(function () {
     // CRUD Pegawai
-    Route::get('/pegawai/system', [SystemController::class, 'index']); // Menampilkan semua Pegawai dan Ketua Kelas
-    Route::post('/pegawai/system', [SystemController::class, 'store']); // Membuat Pegawai baru
-    Route::get('/pegawai/system/{username}', [SystemController::class, 'show']); // Menampilkan detail Pegawai
-    Route::put('/pegawai/system/{username}', [SystemController::class, 'update']); // Memperbarui Pegawai
+    Route::get('/pegawai', [SystemController::class, 'index']); // Menampilkan semua Pegawai dan Ketua Kelas
+    Route::post('/pegawai', [SystemController::class, 'store']); // Membuat Pegawai baru
+    Route::get('/pegawai/{username}', [SystemController::class, 'show']); // Menampilkan detail Pegawai
+    Route::put('/pegawai/{username}', [SystemController::class, 'update']); // Memperbarui Pegawai
 });
 
 //route untuk ketua kelas
