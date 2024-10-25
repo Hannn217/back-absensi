@@ -67,7 +67,6 @@ class AuthController extends Controller
                         'nomor_hp' => $user->nomor_hp,
                         'jabatan' => $user->jabatan,
                         'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
-                        // Tambahkan atribut lain yang diperlukan
                     ],
                     'token' => $token,
                 ], 201);
@@ -107,7 +106,6 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Username atau password salah'], 401);
     }
-
 
     // Logout
     public function logout(Request $request)
