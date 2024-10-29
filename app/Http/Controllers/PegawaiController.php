@@ -41,13 +41,13 @@ class PegawaiController extends Controller
     }
 
     // Menghapus data pegawai dari database
-    public function destroy($username)
+    public function destroy($id)
     {
-        $pegawai = Pegawai::findOrFail($username);
+        $pegawai = Pegawai::findOrFail($id);
         $pegawai->delete();
 
         return response()->json([
-            'message' => 'Data pegawai berhasil dihapus.',
+            'message' => 'Absen pegawai berhasil dihapus.',
         ], 200); // Mengembalikan respons dengan status 200
     }
 }
