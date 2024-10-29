@@ -7,17 +7,34 @@ use Illuminate\Http\Request;
 
 class KetuaKelasController extends Controller
 {
-    // Menampilkan semua data ketua
-    public function index()
+    public function profile()
     {
-        $ketua = KetuaKelas::all();
-        return response()->json($ketua, 200);
-    }
+        // Ambil pengguna yang sedang login
+        $user = auth()->user();
 
-    // Menampilkan form untuk membuat ketua baru
-    public function create()
-    {
-        return view('ketua.create');
+        // Jika pengguna tidak ditemukan (misalnya token tidak valid atau tidak ada pengguna yang login)
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna tidak ditemukan atau belum login'
+            ], 404);
+        }
+
+        // Jika pengguna ditemukan, kembalikan data profilnya
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'id' => $user->id,
+                'nama' => $user->nama,
+                'username' => $user->username,
+                'email' => $user->email,
+                'nomor_hp' => $user->nomor_hp,
+                'jabatan' => $user->jabatan,
+                'nama_kelas' => $user->nama_kelas,
+                'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+            ],
+        ], 201);
     }
 
     // Menyimpan data ketua baru ke database
@@ -48,6 +65,6 @@ class KetuaKelasController extends Controller
 
         return response()->json([
             'message' => 'Data ketua berhasil dihapus.',
-        ], 200);
+        ], 201);
     }
 }

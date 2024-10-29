@@ -10,6 +10,35 @@ use Illuminate\Support\Facades\Hash;
 
 class SystemController extends Controller
 {
+    public function profile()
+    {
+        // Ambil pengguna yang sedang login
+        $user = auth()->user();
+
+        // Jika pengguna tidak ditemukan (misalnya token tidak valid atau tidak ada pengguna yang login)
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna tidak ditemukan atau belum login'
+            ], 404);
+        }
+
+        // Jika pengguna ditemukan, kembalikan data profilnya
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'id' => $user->id,
+                'nama' => $user->nama,
+                'username' => $user->username,
+                'email' => $user->email,
+                'nomor_hp' => $user->nomor_hp,
+                'jabatan' => $user->jabatan,
+                'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+            ],
+        ], 201);
+    }
+
     public function index()
     {
         $users = User::whereIn('jabatan', ['Pegawai', 'Ketua Kelas', 'System Admin'])->get();
@@ -27,41 +56,6 @@ class SystemController extends Controller
                     'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 ];
             }),
-        ], 200);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'username' => 'required|string|max:255|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required',
-            'nomor_hp' => 'required',
-        ]);
-
-        $user = User::create([
-            'nama' => $request->nama,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'nomor_hp' => $request->nomor_hp,
-            'jabatan' => 'Pegawai',
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Pegawai berhasil ditambahkan',
-            'data' => [
-                'id' => $user->id,
-                'nama' => $user->nama,
-                'username' => $user->username,
-                'email' => $user->email,
-                'nomor_hp' => $user->nomor_hp,
-                'jabatan' => $user->jabatan,
-                'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-            ],
         ], 201);
     }
 
@@ -95,7 +89,7 @@ class SystemController extends Controller
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 
     public function update(Request $request, $username)
@@ -135,10 +129,10 @@ class SystemController extends Controller
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 
-    
+
     public function promoteToKetuaKelas($username, Request $request)
     {
         $super = User::where('username', $username)->first();
@@ -191,7 +185,7 @@ class SystemController extends Controller
                 'created_at' => $kelas->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $kelas->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ]
-        ], 200);
+        ], 201);
     }
 
     public function demoteKetuaKelas($username, Request $request)
@@ -228,6 +222,6 @@ class SystemController extends Controller
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 }

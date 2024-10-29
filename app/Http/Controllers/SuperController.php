@@ -36,7 +36,7 @@ class SuperController extends Controller
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 
     public function index()
@@ -216,7 +216,7 @@ class SuperController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Kelas baru telah berhasil dibuat: ' . $kelasBaru->nama_kelas
-                ], 200);
+                ], 201);
             }
         }
 
