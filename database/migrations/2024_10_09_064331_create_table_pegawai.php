@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreign('username')->references('username')->on('users')->onDelete('cascade');
             $table->enum('keterangan', ['hadir', 'izin', 'sakit']); // Keterangan absensi
             $table->string('alasan')->nullable();
-            $table->string('nama_kelas')->unique()->nullable();
+            $table->string('nama_kelas')->nullable();
             $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
             $table->date('date'); // Tanggal absensi
             $table->timestamps();

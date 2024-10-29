@@ -36,7 +36,8 @@ Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(functi
     Route::get('/pegawai', [SuperController::class, 'index']); // List all employees
     Route::get('/pegawai/{username}', [SuperController::class, 'show']); // View employee
     Route::put('/pegawai/{username}', [SuperController::class, 'update']); // Update employee
-    Route::delete('/pegawai/{username}/del', [SuperController::class, 'destroy']); // Delete employee
+    Route::delete('/pegawai/{username}/del', [SuperController::class, 'destroy']); 
+// Delete employee
 
     // Promosi dan Demosi
     Route::post('/pegawai/{username}/promote', [SuperController::class, 'promoteToKetuaKelas']); // Promote to Ketua Kelas
@@ -60,7 +61,22 @@ Route::middleware(['auth:sanctum', 'is.systemadmin'])->group(function () {
     Route::put('/pegawai/{username}', [SystemController::class, 'update']); // Memperbarui Pegawai
 });
 
-//route untuk ketua kelas
+
+Route::get('ketua-kelas', [KetuaKelasController::class, 'index']);
+Route::post('ketua-kelas', [KetuaKelasController::class, 'store']);
+Route::get('ketua-kelas/{username}', [KetuaKelasController::class, 'show']);
+Route::put('ketua-kelas/{username}', [KetuaKelasController::class, 'update']);
+
+// Route untuk absensi Pegawai
+Route::post('pegawai/register', [AuthController::class, 'register']);
+Route::post('pegawai/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
+    Route::post('/pegawai/absen', [PegawaiController::class, 'store']);
+    Route::delete('/pegawai/absen/delete/{id}', [PegawaiController::class, 'destroy']);
+    Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
+});
+
 Route::middleware(['auth:sanctum', 'KetuaKelasMiddleware', 'cuti.pegawai'])->group(function () {
     Route::post('/absen', [KetuaKelasController::class, 'store']); //unutk absen
     Route::post('/logout', [KetuaKelasController::class, 'logout']); //untuk logout
