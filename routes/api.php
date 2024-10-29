@@ -70,6 +70,21 @@ Route::middleware(['auth:sanctum', 'is.systemadmin', 'cuti.ketua'])->group(funct
 });
 
 //Route untuk ketua kelas
+Route::get('ketua-kelas', [KetuaKelasController::class, 'index']);
+Route::post('ketua-kelas', [KetuaKelasController::class, 'store']);
+Route::get('ketua-kelas/{username}', [KetuaKelasController::class, 'show']);
+Route::put('ketua-kelas/{username}', [KetuaKelasController::class, 'update']);
+
+// Route untuk absensi Pegawai
+Route::post('pegawai/register', [AuthController::class, 'register']);
+Route::post('pegawai/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
+    Route::post('/pegawai/absen', [PegawaiController::class, 'store']);
+    Route::delete('/pegawai/absen/delete/{username}', [PegawaiController::class, 'destroy']);
+    Route::post('/pegawai/logout', [PegawaiController::class, 'logout']);
+});
+
 Route::middleware(['auth:sanctum', 'KetuaKelasMiddleware', 'cuti.pegawai'])->group(function () {
     Route::get('/profile/{username}', [KetuaKelasController::class, 'profile']); //get profil ketua kelas
     Route::get('ketua-kelas', [KetuaKelasController::class, 'index']); //menampilkan seluruh data ketua kelas manapun
