@@ -152,22 +152,43 @@ class SuperController extends Controller
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ]
-        ], 200);
+        ], 201);
     }
 
     public function promoteToKetuaKelas($username, Request $request)
     {
         $super = User::where('username', $username)->first();
 
+        // Cek apakah pengguna ditemukan
         if (!$super) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Pengguna tidak ditemukan'
-            ], 404);
+                'message' => 'Username tidak valid'
+            ], 404); // Status 404 untuk username tidak ditemukan
         }
 
-        if ($super->jabatan !== 'Pegawai') {
-            return response()->json(['message' => $username . ' telah menjadi ketua kelas.'], 403);
+        // Cek apakah jabatan pengguna adalah 'Ketua Kelas'
+        if ($super->jabatan === 'Ketua Kelas') {
+            // Cek apakah pengguna sudah menjadi ketua dari kelas yang sama
+            $existingKelas = Kelas::whereJsonContains('daftar_anggota', $super->username)->first();
+
+            if ($existingKelas) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User ini sudah menjadi ketua kelas di ' . $existingKelas->nama_kelas
+                ], 403);
+            } else {
+                // Menyimpan kelas baru tanpa atribut ketua_kelas
+                $kelasBaru = new Kelas();
+                $kelasBaru->nama_kelas = $request->nama_kelas; // Menggunakan nama kelas dari request
+                $kelasBaru->daftar_anggota = json_encode($request->daftar_anggota); // Menggunakan daftar anggota dari request
+                $kelasBaru->save(); // Simpan kelas baru
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Kelas baru telah berhasil dibuat: ' . $kelasBaru->nama_kelas
+                ], 200);
+            }
         }
 
         // Validasi nama_kelas dan daftar_anggota
@@ -191,7 +212,7 @@ class SuperController extends Controller
         $currentKetuaCount = User::where('jabatan', 'Ketua Kelas')->count();
 
         if ($currentKetuaCount >= 5) {
-            return response()->json(['message' => 'Sudah ada 5 Ketua Kelas. Hanya lima Ketua Kelas yang diperbolehkan.'], 403);
+            return response()->json(['status' => 'error', 'message' => 'Sudah ada 5 Ketua Kelas. Hanya lima Ketua Kelas yang diperbolehkan.'], 403);
         }
 
         // Update jabatan pengguna menjadi Ketua Kelas
@@ -221,6 +242,7 @@ class SuperController extends Controller
             ],
         ], 201);
     }
+
 
     public function demoteKetuaKelas($username)
     {
@@ -254,6 +276,6 @@ class SuperController extends Controller
                 'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 }

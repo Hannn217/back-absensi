@@ -35,7 +35,7 @@ class KetuaKelasController extends Controller
         $ketua = KetuaKelas::create($request->all());
 
         return response()->json([
-            'message' => 'KetuaKelas berhasil melakukan absen.',
+            'message' => 'Ketua Kelas berhasil melakukan absen.',
             'ketua' => $ketua,
         ], 201);
     }
