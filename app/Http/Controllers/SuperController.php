@@ -10,6 +10,35 @@ use Illuminate\Support\Facades\Hash;
 
 class SuperController extends Controller
 {
+    public function profile()
+    {
+        // Ambil pengguna yang sedang login
+        $user = auth()->user();
+
+        // Jika pengguna tidak ditemukan (misalnya token tidak valid atau tidak ada pengguna yang login)
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna tidak ditemukan atau belum login'
+            ], 404);
+        }
+
+        // Jika pengguna ditemukan, kembalikan data profilnya
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'id' => $user->id,
+                'nama' => $user->nama,
+                'username' => $user->username,
+                'email' => $user->email,
+                'nomor_hp' => $user->nomor_hp,
+                'jabatan' => $user->jabatan,
+                'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+            ],
+        ], 200);
+    }
+
     public function index()
     {
         $super = User::whereIn('jabatan', ['Pegawai', 'Ketua Kelas', 'System Admin'])

@@ -32,6 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 // Route untuk Super Admin
 Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(function () {
     // CRUD Pegawai dan Ketua Kelas
+    Route::get('/profile/{username}', [SuperController::class, 'profile']); //get profil super admin
     Route::get('/pegawai', [SuperController::class, 'index']); // List all employees
     Route::get('/pegawai/{username}', [SuperController::class, 'show']); // View employee
     Route::put('/pegawai/{username}', [SuperController::class, 'update']); // Update employee
