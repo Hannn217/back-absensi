@@ -40,7 +40,7 @@ class PegawaiController extends Controller
         ], 201); // Mengembalikan respons dengan status 200
     }
 
-    // Menghapus data pegawai dari database
+    // Menghapus absen pegawai dari database
     public function destroy($id)
     {
         $pegawai = Pegawai::findOrFail($id);
