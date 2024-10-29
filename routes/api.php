@@ -25,12 +25,11 @@ use App\Http\Middleware\PegawaiMiddleware;
 
 // Route untuk registrasi dan autentikasi
 Route::post('/register', [AuthController::class, 'register'])->middleware('single.admin'); // Pastikan middleware single.admin sudah diimplementasikan
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/login', [AuthController::class, 'login']); //login user
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); // logout user
 
 // Route untuk Super Admin
 Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(function () {
-    // CRUD Pegawai dan Ketua Kelas
     Route::get('/profile/{username}', [SuperController::class, 'profile']); //get profil super admin
     Route::get('/pegawai', [SuperController::class, 'index']); // List all employees
     Route::get('/pegawai/{username}', [SuperController::class, 'show']); // View employee
