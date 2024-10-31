@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class PegawaiController extends Controller
 {
+    // Menampilkan semua data pegawai
+    public function index()
+    {
+        $pegawai = Pegawai::all();
+        return response()->json($pegawai, 201); // Mengembalikan semua pegawai dengan status 201
+    }
+
     public function profile()
     {
         // Ambil pengguna yang sedang login
@@ -35,13 +42,6 @@ class PegawaiController extends Controller
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
         ], 201);
-    }
-
-    // Menampilkan semua data pegawai
-    public function index()
-    {
-        $pegawai = Pegawai::all();
-        return response()->json($pegawai, 201); // Mengembalikan semua pegawai dengan status 201
     }
 
     // Menyimpan absen ke database
