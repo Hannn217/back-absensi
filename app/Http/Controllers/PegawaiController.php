@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class PegawaiController extends Controller
 {
+<<<<<<< HEAD
     /**
      * Menampilkan profil pengguna yang sedang login.
      */
+=======
+    // Menampilkan semua data pegawai
+    public function index()
+    {
+        $pegawai = Pegawai::all();
+        return response()->json($pegawai, 201); // Mengembalikan semua pegawai dengan status 201
+    }
+
+>>>>>>> f7071e669077b0c66a299e8c3dc36e581c57a9c8
     public function profile()
     {
         // Ambil pengguna yang sedang login
@@ -39,6 +49,7 @@ class PegawaiController extends Controller
         ], 200);
     }
 
+<<<<<<< HEAD
     /**
      * Menampilkan semua data pegawai.
      */
@@ -55,6 +66,9 @@ class PegawaiController extends Controller
     /**
      * Menyimpan absen pegawai ke dalam database.
      */
+=======
+    // Menyimpan absen ke database
+>>>>>>> f7071e669077b0c66a299e8c3dc36e581c57a9c8
     public function store(Request $request)
     {
         // Validasi input
