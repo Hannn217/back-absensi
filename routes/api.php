@@ -81,8 +81,12 @@ Route::middleware(['auth:sanctum', 'KetuaKelasMiddleware', 'cuti.pegawai'])->gro
 // Route untuk Pegawai
 Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
     Route::get('/profile/{username}', [PegawaiController::class, 'profile']); //get profil ketua kelas
+
     Route::post('/pegawai/absen/{username}', [PegawaiController::class, 'store']); //untuk absen
     Route::delete('/pegawai/absen/delete/{id}', [PegawaiController::class, 'destroy']); //untuk hapus absen
+
+    Route::post('/pegawai/absen', [PegawaiController::class, 'store']); //untuk absen
+    Route::delete('/pegawai/absen/delete/{id}', [PegawaiController::class, 'destroy']);
     Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']); //untuk mengajukan cuti 
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']); //untuk logout
 });
