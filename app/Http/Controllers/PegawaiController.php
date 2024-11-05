@@ -17,7 +17,7 @@ class PegawaiController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $pegawai,
-        ], 200); // Mengembalikan semua pegawai dengan status 200
+        ], 201);
     }
 
     /**
@@ -49,7 +49,7 @@ class PegawaiController extends Controller
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
-        ], 200);
+        ], 201);
     }
 
     /**
@@ -63,7 +63,7 @@ class PegawaiController extends Controller
             'username' => 'required|string|max:255',
             'keterangan' => 'required|in:hadir,izin,sakit',
             'alasan' => 'required|string|max:255',
-            'nama_kelas' => 'required|exists:kelas,nama_kelas', // Pastikan nama_kelas valid
+            'nama_kelas' => 'required|exists:kelas,nama_kelas',
             'date' => 'required|date',
         ]);
 
@@ -79,9 +79,9 @@ class PegawaiController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Pegawai berhasil melakukan absen.',
+            'message' => 'Anda berhasil melakukan absen.',
             'data' => $pegawai,
-        ], 201); // Mengembalikan respons dengan status 201
+        ], 201);
     }
 
     /**
@@ -103,6 +103,13 @@ class PegawaiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Absen pegawai berhasil dihapus.',
-        ], 200); // Mengembalikan respons dengan status 200
+        ], 201); 
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Pegawai Berhasil logout'], 201);
     }
 }

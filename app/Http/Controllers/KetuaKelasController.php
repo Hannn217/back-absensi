@@ -37,7 +37,7 @@ class KetuaKelasController extends Controller
         ], 201);
     }
 
-    // Menyimpan data ketua baru ke database
+    // Menyimpan data absen ketua baru ke database
     public function store(Request $request)
     {
         $request->validate([

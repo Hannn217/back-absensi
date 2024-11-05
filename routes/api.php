@@ -11,6 +11,7 @@ use App\Http\Controllers\KetuaKelasController;
 use App\Http\Controllers\PengajuanCutiController;
 use App\Http\Controllers\AcceptController;
 use App\Http\Middleware\PegawaiMiddleware;
+use App\Http\Middleware\KetuaKelasMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,17 +64,18 @@ Route::middleware(['auth:sanctum', 'is.systemadmin', 'cuti.ketua'])->group(funct
     Route::delete('/kelas/{nama_kelas}', [SystemController::class, 'deleteKelas']); // Delete class
 
     //Manajemen Cuti
-    Route::post('/accept/{username}', [AcceptController::class, 'acceptPengajuan']); //untuk menyetujui cuti dari ketua kelas
-    Route::post('/reject/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menolak cuti dari ketua kelas
+    Route::post('/accept/system/{username}', [AcceptController::class, 'acceptPengajuan']); //untuk menyetujui cuti dari ketua kelas
+    Route::post('/reject/system/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menolak cuti dari ketua kelas
 });
 
 //Route untuk ketua kelas
-Route::middleware(['auth:sanctum', 'KetuaKelasMiddleware', 'cuti.pegawai'])->group(function () {
+Route::middleware(['auth:sanctum', 'KetuaKelas', 'cuti.pegawai'])->group(function () {
     Route::get('/profile/{username}', [KetuaKelasController::class, 'profile']); //get profil ketua kelas
     Route::get('ketua-kelas', [KetuaKelasController::class, 'index']); //menampilkan seluruh data ketua kelas manapun
     Route::post('/absen', [KetuaKelasController::class, 'store']); //untuk absen
-    Route::post('/logout', [KetuaKelasController::class, 'logout']); //untuk logout
-    Route::post('/accept/{username}', [AcceptController::class, 'acceptPengajuan']); //untuk menyetujui pengajuan cuti dari pegawai
+    Route::post('/ketua/logout', [KetuaKelasController::class, 'logout']); //untuk logout
+    Route::post('/accept/ketua/{username}', [AcceptController::class, 'acceptPengajuan']);
+    Route::post('/reject/ketua/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menyetujui pengajuan cuti dari pegawai
     Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']); //untuk mengajukakn cuti ke admin
 });
 
