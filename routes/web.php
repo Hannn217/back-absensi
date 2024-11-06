@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-Route::post('/register', [AuthController::class, 'register'])->middleware('single.admin'); // Pastikan middleware single.admin sudah diimplementasikan
-Route::post('/login', [AuthController::class, 'login']); //login user
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
