@@ -44,7 +44,7 @@ class AcceptController extends Controller
         }
 
         // Temukan pengajuan cuti dari user yang memiliki status 'SedangDiProses'
-        $pengajuan = PengajuanCuti::where('usernamee', $user->username)
+        $pengajuan = PengajuanCuti::where('username', $user->username)
             ->where('status', 'SedangDiProses')
             ->first();
 

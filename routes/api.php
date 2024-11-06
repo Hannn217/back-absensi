@@ -31,20 +31,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 // Route untuk Super Admin
 Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(function () {
-    Route::get('/profile/{username}', [SuperController::class, 'profile']); //get profil super admin
-    Route::get('/pegawai', [SuperController::class, 'index']); // List all employees
-    Route::get('/pegawai/{username}', [SuperController::class, 'show']); // View employee
-    Route::put('/pegawai/{username}', [SuperController::class, 'update']); // Update employee
-    Route::delete('/pegawai/{username}/del', [SuperController::class, 'destroy']); // Delete employee
+    Route::get('/profile', [SuperController::class, 'profile']); //get profil super admin
+    Route::get('/all/profile', [SuperController::class, 'index']); // List all employees
+    Route::get('/{username}', [SuperController::class, 'show']); // View employee
+    Route::put('/update/{username}', [SuperController::class, 'update']); // Update employee
+    Route::delete('/{username}/delet', [SuperController::class, 'destroy']); // Delete employee
 
     // Promosi dan Demosi
     Route::post('/pegawai/{username}/promote', [SuperController::class, 'promoteToKetuaKelas']); // Promote to Ketua Kelas
     Route::post('/pegawai/{username}/demote', [SuperController::class, 'demoteKetuaKelas']); // Demote from Ketua Kelas
-
-    // Manajemen Kelas
-    Route::get('/kelas', [SuperController::class, 'listKelas']); // List all classes
-    Route::post('/kelas', [SuperController::class, 'createKelas']); // Create class
-    Route::delete('/kelas/{nama_kelas}', [SuperController::class, 'deleteKelas']); // Delete class
 
     //Manajemen Cuti
     Route::post('/accept/{username}', [AcceptController::class, 'acceptPengajuan']); //untuk menyetujui cuti dari pegawai
