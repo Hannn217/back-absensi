@@ -184,127 +184,57 @@ class SuperController extends Controller
         ], 201);
     }
 
-    public function promoteToKetuaKelas($username, Request $request)
+    public function promoteToKetuaKelas($username)
     {
-        $super = User::where('username', $username)->first();
+        $user = User::where('username', $username)->first();
 
-        // Cek apakah pengguna ditemukan
-        if (!$super) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Username tidak valid'
-            ], 404); // Status 404 untuk username tidak ditemukan
-        }
-
-        // Cek apakah jabatan pengguna adalah 'Ketua Kelas'
-        if ($super->jabatan === 'Ketua Kelas') {
-            // Cek apakah pengguna sudah menjadi ketua dari kelas yang sama
-            $existingKelas = Kelas::whereJsonContains('daftar_anggota', $super->username)->first();
-
-            if ($existingKelas) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'User ini sudah menjadi ketua kelas di ' . $existingKelas->nama_kelas
-                ], 403);
-            } else {
-                // Menyimpan kelas baru tanpa atribut ketua_kelas
-                $kelasBaru = new Kelas();
-                $kelasBaru->nama_kelas = $request->nama_kelas; // Menggunakan nama kelas dari request
-                $kelasBaru->daftar_anggota = json_encode($request->daftar_anggota); // Menggunakan daftar anggota dari request
-                $kelasBaru->save(); // Simpan kelas baru
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Kelas baru telah berhasil dibuat: ' . $kelasBaru->nama_kelas
-                ], 201);
-            }
-        }
-
-        // Validasi nama_kelas dan daftar_anggota
-        $request->validate([
-            'nama_kelas' => 'required|string|max:255',
-            'daftar_anggota' => 'required|array',
-            'daftar_anggota.*' => 'required|string',
-        ]);
-
-        // Cek apakah nama_kelas sudah ada
-        $existingKelas = Kelas::where('nama_kelas', $request->nama_kelas)->first();
-
-        if ($existingKelas) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Nama kelas sudah ada. Pilih nama kelas lain.'
-            ], 400);
-        }
-
-        // Hitung jumlah Ketua Kelas yang ada
-        $currentKetuaCount = User::where('jabatan', 'Ketua Kelas')->count();
-
-        if ($currentKetuaCount >= 5) {
-            return response()->json(['status' => 'error', 'message' => 'Sudah ada 5 Ketua Kelas. Hanya lima Ketua Kelas yang diperbolehkan.'], 403);
-        }
-
-        // Update jabatan pengguna menjadi Ketua Kelas
-        $super->jabatan = 'Ketua Kelas';
-        $super->save();
-
-        // Buat kelas baru
-        $kelas = Kelas::create([
-            'nama_kelas' => $request->nama_kelas,
-            'daftar_anggota' => json_encode($request->daftar_anggota),
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Pegawai berhasil dipromosikan menjadi Ketua Kelas dan kelas berhasil dibuat',
-            'data' => [
-                'id' => $super->id,
-                'nama' => $super->nama,
-                'username' => $super->username,
-                'email' => $super->email,
-                'nomor_hp' => $super->nomor_hp,
-                'jabatan' => $super->jabatan,
-                'nama_kelas' => $kelas->nama_kelas,
-                'daftar_anggota' => $request->daftar_anggota,
-                'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-            ],
-        ], 201);
-    }
-
-
-    public function demoteKetuaKelas($username)
-    {
-        $super = User::where('username', $username)->first();
-
-        if (!$super) {
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Pengguna tidak ditemukan'
             ], 404);
         }
 
-        if ($super->jabatan !== 'Ketua Kelas') {
-            return response()->json(['message' => 'Hanya Ketua Kelas yang dapat di-demote'], 403);
+        if ($user->jabatan === 'Ketua Kelas') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna sudah menjadi Ketua Kelas'
+            ], 400);
         }
 
-        // Ubah jabatan pengguna menjadi Pegawai
-        $super->jabatan = 'Pegawai';
-        $super->save();
+        $user->jabatan = 'Ketua Kelas';
+        $user->save();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Ketua Kelas berhasil di-demote menjadi Pegawai',
-            'data' => [
-                'id' => $super->id,
-                'nama' => $super->nama,
-                'username' => $super->username,
-                'email' => $super->email,
-                'nomor_hp' => $super->nomor_hp,
-                'jabatan' => $super->jabatan,
-                'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-            ],
+            'message' => 'Pegawai berhasil dipromosikan menjadi Ketua Kelas'
+        ], 201);
+    }
+
+    public function demoteKetuaKelas($username)
+    {
+        $user = User::where('username', $username)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna tidak ditemukan'
+            ], 404);
+        }
+
+        if ($user->jabatan !== 'Ketua Kelas') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pengguna bukan Ketua Kelas'
+            ], 400);
+        }
+
+        $user->jabatan = 'Pegawai';
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Ketua Kelas berhasil di-demote menjadi Pegawai'
         ], 201);
     }
 }
