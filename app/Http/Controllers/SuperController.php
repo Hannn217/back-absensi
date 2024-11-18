@@ -6,16 +6,13 @@ use App\Models\User;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
 
 class SuperController extends Controller
 {
     public function profile()
     {
-        // Ambil pengguna yang sedang login
         $user = auth()->user();
 
-        // Jika pengguna tidak ditemukan (misalnya token tidak valid atau tidak ada pengguna yang login)
         if (!$user) {
             return response()->json([
                 'status' => 'error',
@@ -23,7 +20,6 @@ class SuperController extends Controller
             ], 404);
         }
 
-        // Jika pengguna ditemukan, kembalikan data profilnya
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -42,7 +38,7 @@ class SuperController extends Controller
     public function index()
     {
         $super = User::whereIn('jabatan', ['Pegawai', 'Ketua Kelas', 'System Admin'])
-            ->with('kelas') // Load relasi kelas
+            ->with('kelas')
             ->get();
 
         return response()->json([
@@ -55,7 +51,7 @@ class SuperController extends Controller
                     'email' => $super->email,
                     'nomor_hp' => $super->nomor_hp,
                     'jabatan' => $super->jabatan,
-                    'nama_kelas' => $super->kelas ? $super->kelas->nama_kelas : 'Belum Ditambahkan ke dalam kelas', // Ambil dari relasi
+                    'nama_kelas' => $super->kelas ? $super->kelas->nama_kelas : 'Belum Ditambahkan ke dalam kelas',
                     'created_at' => $super->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                     'updated_at' => $super->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 ];
@@ -90,7 +86,7 @@ class SuperController extends Controller
                 'email' => $user->email,
                 'nomor_hp' => $user->nomor_hp,
                 'jabatan' => $user->jabatan,
-                'nama_kelas' => $user->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas',
+                'nama_kelas' => $user->kelas ? $user->kelas->nama_kelas : 'Belum Ditambahkan ke dalam kelas',
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -99,7 +95,6 @@ class SuperController extends Controller
 
     public function update(Request $request, $username)
     {
-        // Cari pengguna berdasarkan username
         $user = User::where('username', $username)->first();
 
         if (!$user) {
@@ -109,12 +104,6 @@ class SuperController extends Controller
             ], 404);
         }
 
-        // Cek apakah jabatan pengguna memungkinkan untuk mengupdate data
-        if (!in_array($user->jabatan, ['Pegawai', 'Ketua Kelas'])) {
-            return response()->json(['message' => 'Tidak dapat mengubah data ini'], 403);
-        }
-
-        // Validasi input
         $request->validate([
             'nama' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
@@ -122,7 +111,6 @@ class SuperController extends Controller
             'nama_kelas' => 'required|string|max:255'
         ]);
 
-        // Pastikan kelas yang diinput valid
         $kelas = Kelas::where('nama_kelas', $request->nama_kelas)->first();
         if (!$kelas) {
             return response()->json([
@@ -131,12 +119,11 @@ class SuperController extends Controller
             ], 404);
         }
 
-        // Update fields
         $user->update([
             'nama' => $request->nama,
             'email' => $request->email,
             'nomor_hp' => $request->nomor_hp,
-            'nama_kelas' => $request->nama_kelas, // Pastikan ini diupdate
+            'kelas_id' => $kelas->id,
         ]);
 
         return response()->json([
@@ -149,7 +136,7 @@ class SuperController extends Controller
                 'email' => $user->email,
                 'nomor_hp' => $user->nomor_hp,
                 'jabatan' => $user->jabatan,
-                'nama_kelas' => $user->nama_kelas ?? 'Belum Ditambahkan ke dalam kelas', // Pastikan untuk menangani nilai null
+                'nama_kelas' => $kelas->nama_kelas,
                 'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
             ],
@@ -167,20 +154,11 @@ class SuperController extends Controller
             ], 404);
         }
 
-        if (!in_array($user->jabatan, ['Pegawai', 'Ketua Kelas'])) {
-            return response()->json(['message' => 'Tidak dapat menghapus data ini'], 403);
-        }
-
         $user->delete();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Pegawai berhasil dihapus',
-            'data' => [
-                'username' => $user->username,
-                'created_at' => $user->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                'updated_at' => $user->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
-            ]
+            'message' => 'Pegawai berhasil dihapus'
         ], 201);
     }
 
@@ -235,6 +213,45 @@ class SuperController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Ketua Kelas berhasil di-demote menjadi Pegawai'
+        ], 201);
+    }
+
+    public function listKelas()
+    {
+        $kelas = Kelas::all();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $kelas->map(function ($kelas) {
+                return [
+                    'id' => $kelas->id,
+                    'nama_kelas' => $kelas->nama_kelas,
+                    'created_at' => $kelas->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                    'updated_at' => $kelas->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                ];
+            })
+        ], 201);
+    }
+
+    public function createKelas(Request $request)
+    {
+        $request->validate([
+            'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas',
+        ]);
+
+        $kelas = Kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kelas berhasil dibuat',
+            'data' => [
+                'id' => $kelas->id,
+                'nama_kelas' => $kelas->nama_kelas,
+                'created_at' => $kelas->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                'updated_at' => $kelas->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
+            ],
         ], 201);
     }
 }
