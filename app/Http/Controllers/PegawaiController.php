@@ -10,16 +10,26 @@ class PegawaiController extends Controller
     /**
      * Menampilkan semua data pegawai.
      */
-    public function index()
-    {
-        $pegawai = Pegawai::all();
 
+     public function getByUsername($username)
+{
+    $pegawai = Pegawai::where('username', $username)->get();
+
+    if ($pegawai->isNotEmpty()) {
         return response()->json([
-            'status' => 'success',
+            'status' => 'sukses',
             'data' => $pegawai,
-        ], 201);
+        ], 200);
+    } else {
+        return response()->json([
+            'status' => 'gagal',
+            'pesan' => 'Pegawai tidak ditemukan',
+        ], 404);
     }
+}
 
+
+    
     /**
      * Menampilkan profil pengguna yang sedang login.
      */

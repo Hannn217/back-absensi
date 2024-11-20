@@ -12,16 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengajuan_cuti', function (Blueprint $table) {
-            $table->id(); // Kolom ID
-            $table->string('username');
-            $table->foreign('username')->references('username')->on('users')->onDelete('cascade'); // Relasi ke tabel users
-            $table->string('nama'); // Nama pemohon cuti
-            $table->string('nama_kelas'); // Nama kelas pemohon cuti
-            $table->foreign('nama_kelas')->references('nama_kelas')->on('kelas')->onDelete('cascade');
+            $table->id(); // Klom ID
+            $table->string('alamat');
             $table->string('status')->default('SedangDiProses'); // Status pengajuan cuti
             $table->string('keterangan')->nullable(); // Keterangan tambahan
             $table->date('tanggal_mulai')->nullable(); // Tanggal mulai cuti
-            $table->date('tanggal_selesai')->nullable(); // Tanggal selesai cuti
+            $table->date('tanggal_selesai')->nullable(); 
+            $table->enum('jenis_cuti', ['Cuti Bulanan', 'Cuti Mingguan']);
             $table->timestamps(); // Kolom created_at dan updated_at
         });
     }
