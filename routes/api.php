@@ -44,6 +44,11 @@ Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(functi
     //Manajemen Cuti
     Route::post('/accept/{username}', [AcceptController::class, 'acceptPengajuan']); //untuk menyetujui cuti dari pegawai
     Route::post('/reject/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menolak cuti dari pegawai
+
+    //Manajemen Kelas
+    Route::get('/kelas', [SuperController::class, 'listKelas']); // List all classes
+    Route::post('/kelas', [SuperController::class, 'createKelas']); // Create class
+    Route::delete('/kelas/{nama_kelas}', [SuperController::class, 'deleteKelas']); // Delete class
 });
 
 //Route Untuk System Admin
