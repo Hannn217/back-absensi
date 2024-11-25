@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Kelas extends Model
 {
@@ -11,6 +12,7 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
+    // Kolom yang dapat diisi
     protected $fillable = [
         'nama_kelas',
         'daftar_anggota'
@@ -19,13 +21,13 @@ class Kelas extends Model
     protected $rules = [
         'nama_kelas' => 'required|string|unique:kelas,nama_kelas|max:255',
     ];
-
+    
     // Relasi ke model Ketua
     public function ketua()
     {
         return $this->hasOne(KetuaKelas::class, 'nama_kelas');
     }
-    
+
     public function users()
     {
         return $this->hasMany(User::class, 'nama_kelas', 'nama_kelas');
