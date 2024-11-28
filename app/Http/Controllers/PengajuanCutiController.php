@@ -6,6 +6,7 @@ use App\Models\PengajuanCuti;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator; // Pastikan untuk mengimpor Validator
+use Illuminate\Support\Facades\Auth; // Untuk mendapatkan pengguna yang sedang login
 
 class PengajuanCutiController extends Controller
 {
@@ -57,5 +58,26 @@ class PengajuanCutiController extends Controller
         ]);
     }
 
-    
+    // Fungsi untuk mendapatkan riwayat cuti pengguna yang sedang login
+    public function getHistoryCuti()
+    {
+        // Ambil pengguna yang sedang login
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Pengguna tidak terautentikasi'], 401);
+        }
+
+        // Ambil riwayat cuti dari pengguna yang sedang login
+        $historyCuti = PengajuanCuti::where('username', $user->username)->get();
+
+        if ($historyCuti->isEmpty()) {
+            return response()->json(['message' => 'Tidak ada riwayat cuti'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Riwayat cuti berhasil diambil',
+            'data' => $historyCuti
+        ]);
+    }
 }
