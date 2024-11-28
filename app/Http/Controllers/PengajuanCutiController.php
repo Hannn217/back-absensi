@@ -26,7 +26,7 @@ class PengajuanCutiController extends Controller
         }
 
         // Buat pengajuan cuti
-        $pengajuancuti = PengajuanCuti::create([ 
+        $pengajuancuti = PengajuanCuti::create([
             'alamat' => $request->input('alamat'),
             'tanggal_mulai' => $request->input('tanggal_mulai'),
             'tanggal_selesai' => $request->input('tanggal_selesai'),
@@ -40,21 +40,22 @@ class PengajuanCutiController extends Controller
     }
 
     public function getPengajuan(Request $request, $username)
-{
-    // Cari pengguna berdasarkan username
-    $user = User::where('username', $username)->first();
+    {
+        // Cari pengguna berdasarkan username
+        $user = User::where('username', $username)->first();
 
-    if (!$user) {
-        return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
+        if (!$user) {
+            return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
+        }
+
+        // Ambil data pengajuan cuti yang terkait dengan pengguna
+        $pengajuanCuti = PengajuanCuti::where('username', $user->username)->get();
+
+        return response()->json([
+            'message' => 'Data pengajuan cuti berhasil diambil',
+            'data' => $pengajuanCuti
+        ]);
     }
 
-    // Ambil data pengajuan cuti yang terkait dengan pengguna
-    $pengajuanCuti = PengajuanCuti::where('username', $user->username)->get();
-
-    return response()->json([
-        'message' => 'Data pengajuan cuti berhasil diambil',
-        'data' => $pengajuanCuti
-    ]);
-}
-
+    
 }
