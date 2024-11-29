@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum', 'is.superadmin', 'cuti.ketua'])->group(functi
     Route::post('/reject/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menolak cuti dari pegawai
 
     //Manajemen Kelas
-    Route::get('/kelas', [SuperController::class, 'listKelas']); // List all classes
+    Route::get('/listkelas', [SuperController::class, 'listKelas']); // List all classes
     Route::post('/kelas', [SuperController::class, 'createKelas']); // Create class
     Route::delete('/kelas/{nama_kelas}', [SuperController::class, 'deleteKelas']); // Delete class
 });
@@ -80,7 +80,7 @@ Route::middleware(['auth:sanctum', 'KetuaKelas', 'cuti.pegawai'])->group(functio
 });
 
 // Route untuk Pegawai
-Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
+Route::middleware(['auth:sanctum', 'PegawaiMiddleware'])->group(function () {
     Route::get('/profile/{username}', [PegawaiController::class, 'profile']); //get profil ketua kelas
     Route::post('/pegawai/absen/{username}', [PegawaiController::class, 'store']);
     

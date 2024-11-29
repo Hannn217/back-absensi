@@ -40,24 +40,6 @@ class PengajuanCutiController extends Controller
         return response()->json(['message' => 'Cuti berhasil diajukan!', 'data' => $pengajuancuti], 201);
     }
 
-    public function getPengajuan(Request $request, $username)
-    {
-        // Cari pengguna berdasarkan username
-        $user = User::where('username', $username)->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
-        }
-
-        // Ambil data pengajuan cuti yang terkait dengan pengguna
-        $pengajuanCuti = PengajuanCuti::where('username', $user->username)->get();
-
-        return response()->json([
-            'message' => 'Data pengajuan cuti berhasil diambil',
-            'data' => $pengajuanCuti
-        ]);
-    }
-
     // Fungsi untuk mendapatkan riwayat cuti pengguna yang sedang login
     public function getHistoryCuti()
     {

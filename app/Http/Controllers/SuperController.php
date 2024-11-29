@@ -230,7 +230,7 @@ class SuperController extends Controller
                     'updated_at' => $kelas->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 ];
             })
-        ], 201);
+        ], 200);
     }
 
     public function createKelas(Request $request)

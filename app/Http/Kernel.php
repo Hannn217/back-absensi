@@ -67,7 +67,7 @@ class Kernel extends HttpKernel
         'is.superadmin' => \App\Http\Middleware\IsSuperAdmin::class,
         'single.admin' => \App\Http\Middleware\EnsureSingleAdmin::class,
         'is.systemadmin' => \App\Http\Middleware\IsSystemAdmin::class,
-        'pegawai' => \App\Http\Middleware\PegawaiMiddleware::class,
+        'PegawaiMiddleware' => \App\Http\Middleware\PegawaiMiddleware::class,
         'KetuaKelas' => \App\Http\Middleware\KetuaKelasMiddleware::class,
         'check.leave' => \App\Http\Middleware\CheckUserCanApplyForLeave::class,
         'cuti.pegawai' => \App\Http\Middleware\CutiPegawai::class,
