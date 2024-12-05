@@ -8,12 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // Isi fillable jika diperlukan
     protected $fillable = [
         'nama',
         'username',
@@ -21,7 +19,7 @@ class User extends Authenticatable
         'password',
         'nomor_hp',
         'jabatan',
-        'nama_kelas'
+        'nama_kelas',
     ];
 
     protected $hidden = [
@@ -29,17 +27,35 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Relasi dengan Kelas (Jika Ketua Kelas terkait dengan Kelas tertentu)
+    // Relasi ke model Kelas
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'nama_kelas', 'nama_kelas');
     }
 
-    /**
-     * Relasi untuk menjadi ketua kelas.
-     */
-    public function ketuaKelas()
+    // Tambahkan sinkronisasi otomatis menggunakan event
+    protected static function boot()
     {
-        return $this->hasOne(Kelas::class, 'ketua_kelas_id');
+        parent::boot();
+
+        // Saat user disimpan (tambah/update)
+        static::saved(function ($user) {
+            if ($user->nama_kelas) {
+                $kelas = Kelas::where('nama_kelas', $user->nama_kelas)->first();
+                if ($kelas) {
+                    $kelas->syncDaftarAnggota(); // Sinkronisasi daftar_anggota
+                }
+            }
+        });
+
+        // Saat user dihapus
+        static::deleted(function ($user) {
+            if ($user->nama_kelas) {
+                $kelas = Kelas::where('nama_kelas', $user->nama_kelas)->first();
+                if ($kelas) {
+                    $kelas->syncDaftarAnggota(); // Sinkronisasi daftar_anggota
+                }
+            }
+        });
     }
 }

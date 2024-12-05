@@ -216,22 +216,38 @@ class SuperController extends Controller
         ], 201);
     }
 
+
     public function listKelas()
     {
+        // Ambil semua data kelas
         $kelas = Kelas::all();
 
+        // Lakukan sinkronisasi untuk setiap kelas
+        $kelas->each(function ($kelas) {
+            // Ambil semua username dari tabel users yang memiliki nama_kelas sama
+            $anggota = User::where('nama_kelas', $kelas->nama_kelas)->pluck('username')->toArray();
+
+            // Update kolom daftar_anggota di tabel kelas
+            $kelas->update([
+                'daftar_anggota' => json_encode($anggota), // Simpan sebagai JSON
+            ]);
+        });
+
+        // Kembalikan response setelah sinkronisasi
         return response()->json([
             'status' => 'success',
             'data' => $kelas->map(function ($kelas) {
                 return [
                     'id' => $kelas->id,
                     'nama_kelas' => $kelas->nama_kelas,
+                    'daftar_anggota' => json_decode($kelas->daftar_anggota), // Decode JSON untuk dikembalikan dalam format array
                     'created_at' => $kelas->created_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                     'updated_at' => $kelas->updated_at->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
                 ];
-            })
+            }),
         ], 200);
     }
+
 
     public function createKelas(Request $request)
     {
