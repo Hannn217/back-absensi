@@ -216,7 +216,6 @@ class SuperController extends Controller
         ], 201);
     }
 
-
     public function listKelas()
     {
         // Ambil semua data kelas
