@@ -74,18 +74,18 @@ Route::middleware(['auth:sanctum', 'KetuaKelas', 'cuti.pegawai'])->group(functio
     Route::get('ketua-kelas', [KetuaKelasController::class, 'index']); //menampilkan seluruh data ketua kelas manapun
     Route::post('/absen', [KetuaKelasController::class, 'store']); //untuk absen
     Route::post('/ketua/logout', [KetuaKelasController::class, 'logout']); //untuk logout
-    Route::post('/accept/ketua/{username}', [AcceptController::class, 'acceptPengajuan']);
-    Route::post('/reject/ketua/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menyetujui pengajuan cuti dari pegawai
+    Route::post('/accept/ketua/{username}', [AcceptController::class, 'acceptPengajuan']); // untuk menyetujui cuti dari pegawai
+    Route::post('/reject/ketua/{username}', [AcceptController::class, 'rejectPengajuan']); //untuk menolak pengajuan cuti dari pegawai
     Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']); //untuk mengajukakn cuti ke admin
 });
 
 // Route untuk Pegawai
 Route::middleware(['auth:sanctum', 'pegawai'])->group(function () {
     Route::get('/profile/{username}', [PegawaiController::class, 'profile']); //get profil ketua kelas
-    Route::post('/pegawai/absen/{username}', [PegawaiController::class, 'store']);
+    Route::post('/pegawai/absen/{username}', [PegawaiController::class, 'store']); //create absen
     
-    Route::get('/absen/{username}', [PegawaiController::class, 'getByUsername']);
-    Route::get('/pengajuan/{username}', [PengajuanCutiController::class, 'getPengajuan']);
+    Route::get('/absen/{username}', [PegawaiController::class, 'getByUsername']); //get absen
+    Route::get('/pengajuan/{username}', [PengajuanCutiController::class, 'getPengajuan']); //get pengjuan cuti
     Route::delete('/pegawai/absen/delete/{id}', [PegawaiController::class, 'destroy']); //untuk hapus absen
     Route::post('/pengajuan', [PengajuanCutiController::class, 'pengajuan']); //untuk mengajukan cuti 
     Route::post('/pegawai/logout', [PegawaiController::class, 'logout']); //untuk logout

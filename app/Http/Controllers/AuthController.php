@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    // Register
     public function register(Request $request)
     {
         $validasi = Validator::make($request->all(), [
@@ -27,7 +26,6 @@ class AuthController extends Controller
             return response()->json($validasi->errors(), 422);
         }
 
-        // Create a new user
         $user = User::create([
             'nama' => $request->nama,
             'nomor_hp' => $request->nomor_hp,
@@ -37,16 +35,13 @@ class AuthController extends Controller
             'jabatan' => $request->jabatan,
         ]);
 
-        // Create token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json(['token' => $token], 201);
     }
 
-    // Login
     public function login(Request $request)
     {
-        // Check for Basic Auth
         if ($request->getUser() && $request->getPassword()) {
             $credentials = [
                 'username' => $request->getUser(),
@@ -57,25 +52,12 @@ class AuthController extends Controller
                 $user = Auth::user();
                 $token = $user->createToken('auth_token')->plainTextToken;
 
-                // Return user data along with token
-                return response()->json([
-                    'userData' => [
-                        'id' => $user->id,
-                        'username' => $user->username,
-                        'nama' => $user->nama,
-                        'email' => $user->email,
-                        'nomor_hp' => $user->nomor_hp,
-                        'jabatan' => $user->jabatan,
-                        'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
-                    ],
-                    'token' => $token,
-                ], 201);
+                return $this->generateResponse($user, $token);
             }
 
             return response()->json(['message' => 'Username atau password salah'], 401);
         }
 
-        // Fallback to standard request validation
         $validasi = Validator::make($request->all(), [
             'username' => 'required|string',
             'password' => 'required',
@@ -89,25 +71,86 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            // Return user data along with token
-            return response()->json([
-                'userData' => [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'nama' => $user->nama,
-                    'email' => $user->email,
-                    'nomor_hp' => $user->nomor_hp,
-                    'jabatan' => $user->jabatan,
-                    'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
-                ],
-                'token' => $token,
-            ], 201);
+            return $this->generateResponse($user, $token);
         }
 
         return response()->json(['message' => 'Username atau password salah'], 401);
     }
 
-    // Logout
+    private function generateResponse($user, $token)
+    {
+        $fitur = [];
+
+        if ($user->jabatan === 'Super Admin') {
+            $fitur = [
+                'Menus' => [
+                    'get_profile' => 'Melihat profil System Admin',
+                    'list_pegawai_ketua' => 'Menampilkan semua Pegawai dan Ketua Kelas',
+                    'detail_pegawai' => 'Melihat detail Pegawai',
+                    'update_pegawai' => 'Memperbarui informasi Pegawai',
+                    'list_classes' => 'Melihat semua kelas',
+                    'create_class' => 'Membuat kelas baru',
+                    'delete_class' => 'Menghapus kelas',
+                    'accept_cuti_ketua' => 'Menyetujui cuti dari Ketua Kelas',
+                    'reject_cuti_ketua' => 'Menolak cuti dari Ketua Kelas',
+                ]
+            ];
+        } elseif ($user->jabatan === 'System Admin') {
+            $fitur = [
+                'Menus' => [
+                    'get_profile' => 'Melihat profil System Admin',
+                    'list_pegawai_ketua' => 'Menampilkan semua Pegawai dan Ketua Kelas',
+                    'detail_pegawai' => 'Melihat detail Pegawai',
+                    'update_pegawai' => 'Memperbarui informasi Pegawai',
+                    'list_classes' => 'Melihat semua kelas',
+                    'create_class' => 'Membuat kelas baru',
+                    'delete_class' => 'Menghapus kelas',
+                    'accept_cuti_ketua' => 'Menyetujui cuti dari Ketua Kelas',
+                    'reject_cuti_ketua' => 'Menolak cuti dari Ketua Kelas',
+                ]
+            ];
+        }elseif ($user->jabatan === 'Pegawai') {
+            $fitur = [
+                'Menus' => [
+                   'get_profile_ketua' => 'Melihat profil Ketua Kelas',
+                    'create_absen' => 'Membuat absensi',
+                    'get_absen' => 'Melihat absensi',
+                    'get_pengajuan_cuti' => 'Melihat pengajuan cuti',
+                    'delete_absen' => 'Menghapus absensi',
+                    'apply_cuti' => 'Mengajukan cuti',
+                    'logout' => 'Keluar dari sistem',
+                ]
+            ];
+        }elseif ($user->jabatan === 'Ketua Kelas') {
+            $fitur = [
+                'Menus' => [
+                'get_profile' => 'Melihat profil Ketua Kelas',
+                'list_ketua_kelas' => 'Menampilkan seluruh data Ketua Kelas manapun',
+                'create_absen' => 'Membuat absensi',
+                'get_absen' => 'Melihat absensi',
+                'approve_cuti' => 'Menyetujui pengajuan cuti dari Pegawai',
+                'reject_cuti' => 'Menolak pengajuan cuti dari Pegawai',
+                'apply_cuti' => 'Mengajukan cuti ke Admin',
+                'logout' => 'Keluar dari sistem',
+                ]
+            ];
+        }
+
+        return response()->json([
+            'userData' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'nama' => $user->nama,
+                'email' => $user->email,
+                'nomor_hp' => $user->nomor_hp,
+                'jabatan' => $user->jabatan,
+                'nama_kelas' => $user->nama_kelas ?? 'Belum ditambahkan ke dalam kelas.',
+            ],
+            'fitur' => $fitur,
+            'token' => $token,
+        ], 201);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
