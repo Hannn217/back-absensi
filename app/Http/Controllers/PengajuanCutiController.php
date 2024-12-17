@@ -6,6 +6,7 @@ use App\Models\PengajuanCuti;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator; // Pastikan untuk mengimpor Validator
+use Illuminate\Support\Facades\Auth; // Untuk mendapatkan pengguna yang sedang login
 
 class PengajuanCutiController extends Controller
 {
@@ -26,7 +27,7 @@ class PengajuanCutiController extends Controller
         }
 
         // Buat pengajuan cuti
-        $pengajuancuti = PengajuanCuti::create([ 
+        $pengajuancuti = PengajuanCuti::create([
             'alamat' => $request->input('alamat'),
             'tanggal_mulai' => $request->input('tanggal_mulai'),
             'tanggal_selesai' => $request->input('tanggal_selesai'),
@@ -39,22 +40,26 @@ class PengajuanCutiController extends Controller
         return response()->json(['message' => 'Cuti berhasil diajukan!', 'data' => $pengajuancuti], 201);
     }
 
-    public function getPengajuan(Request $request, $username)
-{
-    // Cari pengguna berdasarkan username
-    $user = User::where('username', $username)->first();
+    // Fungsi untuk mendapatkan riwayat cuti pengguna yang sedang login
+    public function getHistoryCuti()
+    {
+        // Ambil pengguna yang sedang login
+        $user = Auth::user();
 
-    if (!$user) {
-        return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
+        if (!$user) {
+            return response()->json(['message' => 'Pengguna tidak terautentikasi'], 401);
+        }
+
+        // Ambil riwayat cuti dari pengguna yang sedang login
+        $historyCuti = PengajuanCuti::where('username', $user->username)->get();
+
+        if ($historyCuti->isEmpty()) {
+            return response()->json(['message' => 'Tidak ada riwayat cuti'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Riwayat cuti berhasil diambil',
+            'data' => $historyCuti
+        ]);
     }
-
-    // Ambil data pengajuan cuti yang terkait dengan pengguna
-    $pengajuanCuti = PengajuanCuti::where('username', $user->username)->get();
-
-    return response()->json([
-        'message' => 'Data pengajuan cuti berhasil diambil',
-        'data' => $pengajuanCuti
-    ]);
-}
-
 }
